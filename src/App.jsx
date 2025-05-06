@@ -16,8 +16,8 @@ function App() {
                     element: <DashboardPage />,
                 },
                 {
-                    path: "analytics",
-                    element: <h1 className="title">Analytics</h1>,
+                    path: "students",
+                    element: <h1 className="title">Students</h1>,
                 },
                 {
                     path: "reports",
