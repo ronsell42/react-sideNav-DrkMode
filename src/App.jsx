@@ -1,9 +1,10 @@
+// external imports
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-
 import { ThemeProvider } from "@/contexts/theme-context";
-
+// components imports
 import Layout from "@/routes/layout";
-import DashboardPage from "@/routes/dashboard/page";
+import DashboardPage from "@/routes/dashboard/Page";
+import Students from "@/routes/student/Students";
 
 function App() {
     const router = createBrowserRouter([
@@ -17,7 +18,7 @@ function App() {
                 },
                 {
                     path: "students",
-                    element: <h1 className="title">Students</h1>,
+                    element: <Students />,
                 },
                 {
                     path: "reports",
