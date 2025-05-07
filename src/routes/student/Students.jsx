@@ -6,7 +6,7 @@
         const [search, setSearch] = useState("");
         const [selectedStudent, setSelectedStudent] = useState(null);
         const [currentPage, setCurrentPage] = useState(1);
-        const recordsPerPage = 5;
+        const recordsPerPage = 20;
 
         const [students] = useState([
             { id: 1, name: "John Doe", email: "john@example.com" },
