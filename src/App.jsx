@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/contexts/theme-context";
 import Layout from "@/routes/layout";
 import DashboardPage from "@/routes/dashboard/Page";
 import Students from "@/routes/student/Students";
+import StudentsInfo from "@/routes/student/StudentsInfo";
 
 function App() {
     const router = createBrowserRouter([
@@ -19,6 +20,10 @@ function App() {
                 {
                     path: "students",
                     element: <Students />,
+                },
+                {
+                    path: "students-info/:id",
+                    element: <StudentsInfo />,
                 },
                 {
                     path: "reports",
