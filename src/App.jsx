@@ -22,7 +22,7 @@ function App() {
                     element: <Students />,
                 },
                 {
-                    path: "students-info/:id",
+                    path: "students/students-info/:id",
                     element: <StudentsInfo />,
                 },
                 {

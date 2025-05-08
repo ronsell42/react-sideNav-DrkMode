@@ -15,7 +15,7 @@ export const navbarLinks = [
             {
                 label: "Students",
                 icon: ChartColumn,
-                path: "/Students",
+                path: "/students",
             },
             {
                 label: "Reports",
