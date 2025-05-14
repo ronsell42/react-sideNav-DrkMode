@@ -6,6 +6,7 @@ import Layout from "@/routes/layout";
 import DashboardPage from "@/routes/dashboard/Page";
 import Students from "@/routes/student/Students";
 import StudentsInfo from "@/routes/student/StudentsInfo";
+import AddEditStudent from "@/routes/student/AddEditStudent";
 
 function App() {
     const router = createBrowserRouter([
@@ -24,6 +25,14 @@ function App() {
                 {
                     path: "students/students-info/:id",
                     element: <StudentsInfo />,
+                },
+                  {
+                    path: "students/add",
+                    element: <AddEditStudent />,
+                },
+                {
+                    path: "students/students-info/edit/:id",
+                    element: <AddEditStudent />,
                 },
                 {
                     path: "reports",

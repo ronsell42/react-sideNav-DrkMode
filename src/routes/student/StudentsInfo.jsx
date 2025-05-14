@@ -1,14 +1,13 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Pencil, Trash2, ArrowLeft, Printer } from "lucide-react";
-import EditStudent from "./EditStudent"; // Adjust path as needed
+import EditStudent from "./AddEditStudent"; // Adjust path as needed
 
-const StudentsInfo = () => {
+const StudentsInfo = ({ isEditMode = false }) => {
     const { id } = useParams();
     const navigate = useNavigate();
 
     const [student, setStudent] = useState(null);
-    const [isEditMode, setIsEditMode] = useState(false);
 
     useEffect(() => {
         const storedStudent = JSON.parse(localStorage.getItem("selectedStudent"));
@@ -50,13 +49,16 @@ const StudentsInfo = () => {
                     </button>
 
                     <div className="flex space-x-2">
-                        <button
-                            onClick={() => setIsEditMode(true)}
-                            className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md flex items-center space-x-1"
-                        >
-                            <Pencil size={16} />
-                            <span>Edit</span>
-                        </button>
+                        <Link
+    to={{
+        pathname: `/students/add-edit`,
+        state: { action: 'Edit', studentId: student.id }
+    }}
+    className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md flex items-center space-x-1"
+>
+    <Pencil size={16} />
+    <span>Edit</span>
+</Link>
                         <button
                             onClick={handlePrint}
                             className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md flex items-center space-x-1"
@@ -84,7 +86,20 @@ const StudentsInfo = () => {
                     {["name", "email", "phone", "address"].map((field) => (
                         <div key={field}>
                             <label className="block font-semibold capitalize mb-1">{field}:</label>
-                            <p className="bg-gray-100 px-3 py-2 rounded-md">{student[field]}</p>
+                            {isEditMode ? (
+    <input
+        type="text"
+        name={field}
+        value={student[field] || ""}
+        onChange={(e) =>
+            setStudent((prev) => ({ ...prev, [field]: e.target.value }))
+        }
+        className="border px-3 py-2 rounded-md w-full"
+    />
+) : (
+    <p className="bg-gray-100 px-3 py-2 rounded-md">{student[field] || "N/A"}</p>
+)}
+
                         </div>
                     ))}
                 </div>
@@ -112,6 +127,28 @@ const StudentsInfo = () => {
                     onClose={() => setIsEditMode(false)}
                 />
             )}
+
+            {isEditMode && (
+    <div className="mt-6 flex gap-2">
+        <button
+            onClick={() => {
+                alert(`Updated student: ${student.name}`);
+                localStorage.setItem("selectedStudent", JSON.stringify(student));
+                navigate(`/students/students-info/${id}`);
+            }}
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+        >
+            Save
+        </button>
+        <button
+            onClick={() => navigate(`/students/students-info/${id}`)}
+            className="border px-4 py-2 rounded-md"
+        >
+            Cancel
+        </button>
+    </div>
+)}
+
         </div>
     );
 };

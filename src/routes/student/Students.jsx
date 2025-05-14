@@ -1,15 +1,14 @@
-import { useState } from "react";
+import { useState } from "react"; 
 import { Plus, Eye, Trash2 } from "lucide-react";
-import { Link } from "react-router-dom";
-import AddStudent from "./AddStudent";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const Students = () => {
     const [search, setSearch] = useState("");
     const [selectedStudent, setSelectedStudent] = useState(null);
-    const [showAddModal, setShowAddModal] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const recordsPerPage = 20;
-
+    const navigate = useNavigate();
 
     const [students, setStudents] = useState([
         { id: 1, name: "John Doe", email: "john@example.com" },
@@ -46,7 +45,6 @@ const Students = () => {
     };
 
     const handleRowClick = (student) => {
-        // If already selected, unselect it, else select it
         if (selectedStudent?.id === student.id) {
             setSelectedStudent(null);
         } else {
@@ -54,28 +52,39 @@ const Students = () => {
         }
     };
 
+    const handleAddStudent = (studentData) => {
+        setStudents((prevStudents) => [
+            ...prevStudents,
+            { ...studentData, id: prevStudents.length + 1 }
+        ]);
+        alert(`Student added: ${studentData.name}`);
+        navigate("/students");
+    };
+
     return (
         <div className="students-page p-0">
             <h1 className="text-2xl font-bold mb-4">Students</h1>
             <div className="flex items-center justify-between mb-4 flex-row-reverse">
-             <input
-                type="text"
-                placeholder="Search students..."
-                value={search}
-                onChange={e => {
-                    setSearch(e.target.value);
-                    setCurrentPage(1);
-                }}
-                className="border px-3 py-2 rounded-md w-1/3 shadow-sm focus:outline-none focus:ring focus:border-blue-300 ml-auto"
-            />
-
+                <input
+                    type="text"
+                    placeholder="Search students..."
+                    value={search}
+                    onChange={e => {
+                        setSearch(e.target.value);
+                        setCurrentPage(1);
+                    }}
+                    className="border px-3 py-2 rounded-md w-1/3 shadow-sm focus:outline-none focus:ring focus:border-blue-300 ml-auto"
+                />
                 <div className="space-x-2 flex">
-                <button
-                onClick={() => setShowAddModal(true)}
-                className="btn-ghost text-white bg-green-600 border border-green-600 hover:bg-green-700 hover:text-white"
-                >
-                <Plus size={18} /> Add
-                </button>
+                    <Link
+    to={{
+        pathname: "/students/add",
+        state: { action: 'Add' }
+    }}
+    className="btn-ghost text-white bg-green-600 border border-green-600 hover:bg-green-700 hover:text-white"
+>
+    <Plus size={18} /> Add
+</Link>
 
                     <Link
                         to={
@@ -99,7 +108,9 @@ const Students = () => {
                         disabled={!selectedStudent}
                         onClick={() => {
                             if (selectedStudent) {
-                                const confirmDelete = window.confirm(`Are you sure you want to delete ${selectedStudent.name}?`);
+                                const confirmDelete = window.confirm(
+                                    `Are you sure you want to delete ${selectedStudent.name}?`
+                                );
                                 if (confirmDelete) {
                                     handleDelete(selectedStudent.id);
                                 }
@@ -140,7 +151,11 @@ const Students = () => {
                         <button
                             key={pageNumber}
                             onClick={() => changePage(pageNumber)}
-                            className={`px-3 py-1 rounded border ${currentPage === pageNumber ? "bg-blue-500 text-white" : "bg-gray-200 hover:bg-gray-300"}`}
+                            className={`px-3 py-1 rounded border ${
+                                currentPage === pageNumber
+                                    ? "bg-blue-500 text-white"
+                                    : "bg-gray-200 hover:bg-gray-300"
+                            }`}
                         >
                             {pageNumber}
                         </button>
@@ -158,74 +173,62 @@ const Students = () => {
 
             <div className="overflow-y-auto shadow border rounded-lg max-h-96">
                 <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-100 sticky top-0 z-10">
-                    <tr>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Actions</th>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Name</th>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Email</th>
-                    </tr>
-                </thead>
+                    <thead className="bg-gray-100 sticky top-0 z-10">
+                        <tr>
+                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Actions</th>
+                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Name</th>
+                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Email</th>
+                        </tr>
+                    </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-    {currentStudents.map(student => (
-        <tr
-            key={student.id}
-            onClick={() => handleRowClick(student)}
-            className={`group cursor-pointer ${
-                selectedStudent?.id === student.id 
-                    ? "bg-blue-500 bg-opacity-25" : "hover:bg-gray-50"}`}
-        >
-            {/* Actions first */}
-            <td className="px-6 py-4 whitespace-nowrap text-left">
-                <div className="transition-opacity duration-200 flex space-x-2">
-                    <Link
-                        to={`/students/students-info/${student.id}`}
-                        onClick={() =>
-                            localStorage.setItem("selectedStudent", JSON.stringify(student))
-                        }
-                    >
-                        <button className="bg-blue-600 hover:bg-blue-700 text-white p-1 rounded-md">
-                            <Eye size={16} />
-                        </button>
-                    </Link>
-                    <button
-                        className="bg-red-600 hover:bg-red-700 text-white p-1 rounded-md"
-                        onClick={() => {
-                            const confirmDelete = window.confirm(`Are you sure you want to delete ${student.name}?`);
-                            if (confirmDelete) {
-                                handleDelete(student.id);
-                            }
-                        }}
-                    >
-                        <Trash2 size={16} />
-                    </button>
-                </div>
-            </td>
-            {/* Name */}
-            <td className="px-6 py-4 whitespace-nowrap">{student.name}</td>
-            {/* Email */}
-            <td className="px-6 py-4 whitespace-nowrap">{student.email}</td>
-        </tr>
-    ))}
-</tbody>
-
+                        {currentStudents.map(student => (
+                            <tr
+                                key={student.id}
+                                onClick={() => handleRowClick(student)}
+                                className={`group cursor-pointer ${
+                                    selectedStudent?.id === student.id
+                                        ? "bg-blue-500 bg-opacity-25"
+                                        : "hover:bg-gray-50"
+                                }`}
+                            >
+                                {/* Actions first */}
+                                <td className="px-6 py-4 whitespace-nowrap text-left">
+                                    <div className="transition-opacity duration-200 flex space-x-2">
+                                        <Link
+                                            to={`/students/students-info/${student.id}`}
+                                            onClick={() =>
+                                                localStorage.setItem("selectedStudent", JSON.stringify(student))
+                                            }
+                                        >
+                                            <button className="bg-blue-600 hover:bg-blue-700 text-white p-1 rounded-md">
+                                                <Eye size={16} />
+                                            </button>
+                                        </Link>
+                                        <button
+                                            className="bg-red-600 hover:bg-red-700 text-white p-1 rounded-md"
+                                            onClick={() => {
+                                                const confirmDelete = window.confirm(
+                                                    `Are you sure you want to delete ${student.name}?`
+                                                );
+                                                if (confirmDelete) {
+                                                    handleDelete(student.id);
+                                                }
+                                            }}
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    </div>
+                                </td>
+                                {/* Name */}
+                                <td className="px-6 py-4 whitespace-nowrap">{student.name}</td>
+                                {/* Email */}
+                                <td className="px-6 py-4 whitespace-nowrap">{student.email}</td>
+                            </tr>
+                        ))}
+                    </tbody>
                 </table>
             </div>
-            {showAddModal && (
-  <div
-    className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center"
-    onClick={() => setShowAddModal(false)}
-  >
-    <div
-      onClick={(e) => e.stopPropagation()}
-      className="relative z-60"
-    >
-      <AddStudent onClose={() => setShowAddModal(false)} />
-    </div>
-  </div>
-)}
         </div>
-
-        
     );
 };
 
